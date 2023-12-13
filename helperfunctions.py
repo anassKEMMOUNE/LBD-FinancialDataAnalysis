@@ -72,6 +72,18 @@ def previous_credits_aggreg(df : pd.DataFrame) :
     df_avg.columns = ['previous_credits_' + col for col in df_avg.columns]
     return df_avg   
 
+def previous_credits_aggreg_with_curr(df : pd.DataFrame) :
+
+    """Function to perform an aggregation function on the DataFrame in order to have unique ids"""
+
+    #group by id and perform an aggregation function to have unique ids
+    df_avg = df.groupby('sk_id_curr').mean()
+    df_avg['p_count'] = df[['sk_id_bureau','sk_id_curr']].groupby('sk_id_curr').count()['sk_id_bureau']
+    #Rename columns
+    df_avg.columns = ['previous_credits_' + col for col in df_avg.columns]
+    df_avg['sk_id_curr'] = df_avg.index
+    return df_avg 
+
 def credit_bureau_balance_aggreg(df : pd.DataFrame) :
 
     """Function to perform an aggregation function on the DataFrame in order to have unique ids"""
@@ -166,7 +178,7 @@ def getSection3() :
         'status_X': 'last'
     }
     credit_bureau_balance = df_aggreg(credit_bureau_balance,'sk_id_bureau',aggregations_credit_bureau_balance)
-    previous_credits = previous_credits_aggreg(previous_credits)
+    previous_credits = previous_credits_aggreg_with_curr(previous_credits)
 
     #Inplace merging
     
